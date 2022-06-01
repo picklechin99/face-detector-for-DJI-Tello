@@ -1,0 +1,43 @@
+import cv2
+from djitellopy import Tello
+import numpy as np
+
+#The following code allows the drone to find faces
+
+pablo = Tello()
+pablo.connect()
+#pablo.takeoff()
+#get pre-trained data
+trained_face_data = cv2.CascadeClassifier(r'C:\Users\akshi\Desktop\AP_CSP_Roblox\haarcascade_frontalface_default.xml')
+# turns on the stream from the drone
+pablo.streamon()
+
+
+
+
+while True:
+
+# gets the frame from the drone
+    frame = pablo.get_frame_read()
+
+    frame = frame.frame
+#changes the size of the frame
+    img = cv2.resize(frame, (400,300))
+# grayscales the image so that it can be used to find the faces
+    grayscaled_webcam = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+   
+    #looks for faces and stores the coordinates
+    face_coords = trained_face_data.detectMultiScale(grayscaled_webcam)
+    #print(face_coords)
+    for (x, y, w, h) in face_coords:
+        cv2.rectangle(frame, (x, y), (x+(w*3), y+(h*3)), (0, 255, 0), 2)
+
+
+    #show image to screen
+    cv2.imshow('Face Detector App', frame)
+    key = cv2.waitKey(1)
+
+# when q is pressed, the program will close
+    if key==81 or key==113:
+        break 
+
